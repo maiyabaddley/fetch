@@ -2,15 +2,14 @@ import React, { useState, useEffect } from 'react'
 import classnames from 'classnames'
 import './App.css'
 
+/*
+  Utility functions
+*/
 function byListIdThenName(a, b) {
   if (a.listId === b.listId) {
-    // in looking at the data, the format of the name is: Item [number]
-    // this could either be sorted by string or by parsing out the number and sorting by number
-    // sorting by number will generally look better to the user's eye and easier to find numeric-like data
-    // because they will descend numerically, otherwise Item 28 and Item 280 would be next to eachother
-    // but this should only be done if the name truly is psuedo-numeric not if the name is merely a title (like the name of a product)
-    // without association to the other items
-    // because the name is consistent I'm doing the easiest approach, of course I could use RegExp
+    // Note: this sort would be a business decision
+    // I chose to sort numerically because of the data format
+    // it looks much better than the string sort would have
     const [aPre, aNum] = a.name.split('Item ')
     const [bPre, bNum] = b.name.split('Item ')
     return +aNum < +bNum ? -1 : 1
@@ -21,7 +20,7 @@ function byListIdThenName(a, b) {
 const sort = (data) => data.sort(byListIdThenName)
 // this filters out any 'falsey' name including null, undefined, empty string and 0
 const filter = (data) => data.filter(({ name }) => !!name)
-// in production code I would use a library with utility functions such as lodash
+// in production code I would use a library with utility functions such as lodash's groupBy
 const group = (data) => {
   const groups = {}
   data.forEach((d) => {
@@ -31,7 +30,9 @@ const group = (data) => {
   return groups
 }
 
-// I would normally put this into a service or datalayer
+/*
+  Service/DataLayer functions
+*/
 function getData() {
   return fetch('https://fetch-hiring.s3.amazonaws.com/hiring.json')
     .then((response) => response.json())
@@ -40,8 +41,9 @@ function getData() {
     .then(group)
 }
 
-// I would usually put all functional components into a folder for easy testing
-// and resuse
+/*
+  Functional Components
+*/
 function ListItem({ name, listId, id }) {
   return (
     <div data-test-id={id} className="list-item">
@@ -59,7 +61,7 @@ function List({ title, values = [], id }) {
       className={classnames('list-items', { collapsed })}
     >
       <h3 onClick={() => setCollapsed(!collapsed)}>
-        {title} <i className="fas fa-caret-down" />
+        {title} <i className="fas fa-caret-up" />
       </h3>
       <span className="item-count-label">{values.length} items</span>
       <div>
@@ -74,6 +76,10 @@ function List({ title, values = [], id }) {
 function Loader({ loading }) {
   return <i className="fab fa-loading" />
 }
+
+/*
+  App component
+*/
 
 function App() {
   const [data, setData] = useState([])
