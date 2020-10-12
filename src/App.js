@@ -71,6 +71,10 @@ function List({ title, values = [], id }) {
   )
 }
 
+function Loader({ loading }) {
+  return <i className="fab fa-loading" />
+}
+
 function App() {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
@@ -86,17 +90,22 @@ function App() {
 
   return (
     <div className="app">
-      <h2>Fetch Rewards Coding Exercise</h2>
+      <header>
+        <img height={128} src="fetch.png" />
+      </header>
       <aside>
         <a
           href="https://www.linkedin.com/in/jason-baddley-36167931/"
           target="blank"
         >
-          <i className="fab fa-linkedin" />
+          <i className="fab spin fa-linkedin" />
           <span>by Jason Baddley</span>
         </a>
       </aside>
       <div className={classnames('content', { loading })}>
+        <div className="loader">
+          <i className="fas fa-spin fa-spinner" /> Loading Data
+        </div>
         <p>Click on a list toggle its list of items</p>
         {Object.entries(data).map(([listId, values]) => (
           <List
